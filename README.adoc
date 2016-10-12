@@ -1,0 +1,86 @@
+= spring-cloud-stream-binder-pubsub (Alpha) image:https://travis-ci.org/viniciusccarvalho/spring-cloud-stream-binder-pubsub.svg?branch=master["Build Status", link="https://travis-ci.org/viniciusccarvalho/spring-cloud-stream-binder-pubsub"] image:https://codecov.io/gh/viniciusccarvalho/spring-cloud-stream-binder-pubsub/branch/master/graph/badge.svg["codecov]
+Google Pubsub binder implementation
+
+== Requirements
+
+This project uses `https://github.com/GoogleCloudPlatform/google-cloud-java[google-cloud-java]` latest gRPC PubSub client. In order to activate the
+autoconfig of the binder you need to provide a bean of type `com.google.cloud.pubsub.PubSub`
+
+[source,java]
+----
+
+public class SampleStreamApp {
+
+	public PubSub pubSub() throws Exception {
+		return PubSubOptions
+               		.builder()
+               		.authCredentials(AuthCredentials
+               		.createForJson(<YOUR_GOOGLE_CLOUD_JSON_CREDENTIALS>))
+               		.build()
+               		.service();
+	}
+
+}
+----
+
+== Configuration
+
+The binder has a few properties you can tweak to your need:
+
+*Producer*
+
+----
+spring.cloud.stream.pubsub.bindings.<channelName>.producer.
+ - concurrency: How many threads the Reactor processor should use to dispatch messages to google pubsub. Default: num_cores * 3
+ - batchSize: How many messages should be grouped before sending. Default: 1000, minumum:1 maximum: 1000
+ - windowSize: Duration in millis that should wait before dispatch messages (or dispatch as soon as batchSize fills). Default: 100 minimum: 1
+ - batchEnabled: Toggle batch processing. Default: true
+----
+
+== Limitations
+
+Due to an issue on how https://www.eclipse.org/jetty/documentation/9.3.x/alpn-chapter.html[ALPN] is loaded by netty
+This binder will not work if you are using Tomcat as the default servlet engine. Make sure you remove tomcat and use Jetty instead:
+
+[source,xml]
+----
+<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jetty</artifactId>
+		</dependency>
+----
+
+== A note on batching
+
+There are many evidences out there of pubsub performance. But as the Spotify reports on their blog https://labs.spotify.com/2016/03/03/spotifys-event-delivery-the-road-to-the-cloud-part-ii/[blog]
+
+latency for single message processing can be quite high. Our experiments show an average of 50ms per operation from external servers or ~30ms from google servers. Because of this, the protocol thrives on
+batch messaging.
+
+It comes with a price, batch processing means you can't handle individual transactional failure. We support both modes, and highly recommend the batching mode, with some sort of recovery associated if you
+can embrace eventually consistency.
+
+== Testing
+
+Tests can run locally using the pubsub emulator. The test Suite will download the emulator
+start it and bind it to the test classes.
+
+You can also bind to google pubsub directly for testing by exposing the contents of your JSON authentication file using
+an environment variable: `GOOGLE_CLOUD_JSON_CRED`
+
+*Be aware* that the tests will wipe out any topic/subscription of the project you are running
+so make sure that you don't run your tests where you have topics/subscriptions being used somewhere else.
+
+
+
