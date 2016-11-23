@@ -17,19 +17,36 @@
 
 package org.springframework.cloud.stream.binder.pubsub.config;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.json.JsonParser;
+import org.springframework.boot.json.JsonParserFactory;
 import org.springframework.cloud.stream.binder.Binder;
 import org.springframework.cloud.stream.binder.pubsub.PubSubExtendedBindingProperties;
 import org.springframework.cloud.stream.binder.pubsub.PubSubMessageChannelBinder;
 import org.springframework.cloud.stream.binder.pubsub.PubSubResourceManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.env.Environment;
 import org.springframework.integration.codec.Codec;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.util.Base64;
+import com.google.cloud.AuthCredentials;
 import com.google.cloud.pubsub.PubSub;
 import com.google.cloud.pubsub.PubSubOptions;
 
@@ -50,18 +67,9 @@ public class PubSubServiceAutoConfiguration {
 	@Autowired
 	private PubSubExtendedBindingProperties pubSubExtendedBindingProperties;
 
-	@Autowired
-	private PubSubBinderConfigurationProperties pubSubBinderConfigurationProperties;
-
 	@Bean
 	public PubSubResourceManager pubSubResourceManager(PubSub pubSub) {
 		return new PubSubResourceManager(pubSub);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean(PubSub.class)
-	public PubSub pubSub(){
-		return PubSubOptions.builder().build().service();
 	}
 
 	@Bean
@@ -71,6 +79,43 @@ public class PubSubServiceAutoConfiguration {
 		binder.setExtendedBindingProperties(this.pubSubExtendedBindingProperties);
 		binder.setCodec(codec);
 		return binder;
+	}
+
+	@ConditionalOnMissingBean(PubSub.class)
+	@Configuration
+	public static class PubSubConfiguration {
+
+
+		@Autowired
+		private PubSubBinderConfigurationProperties pubSubBinderConfigurationProperties;
+
+		@Value("${vcap.services.google.credentials.email:}")
+		private String email;
+
+		@Value("${vcap.services.google.credentials.privateKey:}")
+		private String privateKey;
+
+		@Bean
+		@Profile("!cloud")
+		public PubSub pubSubNoCloud(){
+			return PubSubOptions.newBuilder().build().getService();
+		}
+
+		@Bean
+		@Profile("cloud")
+		public PubSub pubSubCloud(Environment environment) throws Exception {
+			String vcapServicesEnv = environment.getProperty("VCAP_SERVICES");
+			JsonParser parser = JsonParserFactory.getJsonParser();
+			Map<String, Object> services = parser.parseMap(vcapServicesEnv);
+			List<Map<String, Object>> googlePubsub = (List<Map<String, Object>>) services.get("google-pubsub");
+			Map<String, Object> credentials = (Map<String, Object>) googlePubsub.get(0).get("credentials");
+			String privateKeyData = (String) credentials.get("PrivateKeyData");
+			GoogleCredential googleCredential = GoogleCredential.fromStream(new ByteArrayInputStream(Base64.decodeBase64(privateKeyData)));
+
+			return PubSubOptions.newBuilder().setAuthCredentials(AuthCredentials.createFor(googleCredential.getServiceAccountId(),
+					googleCredential.getServiceAccountPrivateKey()))
+					.setProjectId(pubSubBinderConfigurationProperties.getProjectName()).build().getService();
+		}
 	}
 
 }
