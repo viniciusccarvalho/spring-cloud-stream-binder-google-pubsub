@@ -16,24 +16,25 @@
  */
 package org.springframework.cloud.stream.binder.pubsub.support;
 
-import com.google.cloud.pubsub.Message;
+
+import com.google.pubsub.v1.PubsubMessage;
 
 /**
- * Wrapper of com.google.cloud.pubsub.Message that contains the topic that the message
+ * Wrapper of {@link PubsubMessage} that contains the topic that the message
  * should be published to. Useful for groupBy operation on the processor
  * @author Vinicius Carvalho
  */
-public class PubSubMessage {
+public class DestinationAwareMessage {
 
-	private final Message message;
+	private final PubsubMessage message;
 	private final String topic;
 
-	public PubSubMessage(Message message, String topic) {
+	public DestinationAwareMessage(PubsubMessage message, String topic) {
 		this.message = message;
 		this.topic = topic;
 	}
 
-	public Message getMessage() {
+	public PubsubMessage getMessage() {
 		return message;
 	}
 

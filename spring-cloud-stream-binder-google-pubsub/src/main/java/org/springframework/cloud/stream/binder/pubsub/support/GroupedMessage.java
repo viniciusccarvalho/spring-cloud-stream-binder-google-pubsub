@@ -19,16 +19,17 @@ package org.springframework.cloud.stream.binder.pubsub.support;
 
 import java.util.List;
 
-import com.google.cloud.pubsub.Message;
+import com.google.pubsub.v1.PubsubMessage;
+
 
 /**
  * @author Vinicius Carvalho
  */
 public class GroupedMessage {
 	private final String topic;
-	private final List<Message> messages;
+	private final List<PubsubMessage> messages;
 
-	public GroupedMessage(String topic, List<Message> messages) {
+	public GroupedMessage(String topic, List<PubsubMessage> messages) {
 		this.topic = topic;
 		this.messages = messages;
 	}
@@ -37,7 +38,7 @@ public class GroupedMessage {
 		return topic;
 	}
 
-	public List<Message> getMessages() {
+	public List<PubsubMessage> getMessages() {
 		return messages;
 	}
 
