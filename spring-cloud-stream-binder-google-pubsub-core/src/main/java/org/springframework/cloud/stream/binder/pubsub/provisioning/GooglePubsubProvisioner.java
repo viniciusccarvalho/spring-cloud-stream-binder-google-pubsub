@@ -29,6 +29,7 @@ import org.springframework.cloud.stream.provisioning.ProvisioningProvider;
  * @author Vinicius Carvalho
  */
 public class GooglePubsubProvisioner implements ProvisioningProvider<ExtendedConsumerProperties<PubSubConsumerProperties>, ExtendedProducerProperties<PubSubProducerProperties>>{
+
 	@Override
 	public ProducerDestination provisionProducerDestination(String name, ExtendedProducerProperties<PubSubProducerProperties> properties) throws ProvisioningException {
 		return null;

@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.stream.binder.pubsub.support;
+package org.springframework.cloud.stream.binder.pubsub.provisioning;
 
 /**
  * @author Vinicius Carvalho
  */
-public interface PubSubBinder {
+public interface PubSubBinderOptions {
 	String SCST_HEADERS = "SCST_HEADERS";
+
 	String GROUP_INDEX_DELIMITER = ".";
+
 	String ALREADY_EXISTS = "ALREADY_EXISTS";
+
+	String PARTITION_DELIMITER = "-";
 }

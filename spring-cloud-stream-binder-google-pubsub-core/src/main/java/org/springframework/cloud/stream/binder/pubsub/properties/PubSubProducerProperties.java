@@ -20,9 +20,8 @@ package org.springframework.cloud.stream.binder.pubsub.properties;
 /**
  * @author Vinicius Carvalho
  */
-public class PubSubProducerProperties {
+public class PubSubProducerProperties extends PubSubCommonProperties{
 
-	private String prefix = "";
 
 	private Integer concurrency = null;
 
@@ -66,11 +65,5 @@ public class PubSubProducerProperties {
 		this.concurrency = concurrency;
 	}
 
-	public String getPrefix() {
-		return prefix;
-	}
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
 }

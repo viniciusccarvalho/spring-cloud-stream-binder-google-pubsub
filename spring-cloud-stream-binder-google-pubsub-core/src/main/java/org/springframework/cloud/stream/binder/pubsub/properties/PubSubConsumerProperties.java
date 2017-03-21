@@ -20,19 +20,10 @@ package org.springframework.cloud.stream.binder.pubsub.properties;
 /**
  * @author Vinicius Carvalho
  */
-public class PubSubConsumerProperties {
+public class PubSubConsumerProperties extends PubSubCommonProperties{
 
-	private String prefix = "";
 
 	private Integer ackDeadlineSeconds = 10;
-
-	public String getPrefix() {
-		return prefix;
-	}
-
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
 
 	public Integer getAckDeadlineSeconds() {
 		return ackDeadlineSeconds;

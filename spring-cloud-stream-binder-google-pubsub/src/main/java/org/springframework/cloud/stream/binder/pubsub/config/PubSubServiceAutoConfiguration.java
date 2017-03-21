@@ -23,6 +23,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.stream.binder.Binder;
 import org.springframework.cloud.stream.binder.pubsub.properties.PubSubExtendedBindingProperties;
 import org.springframework.cloud.stream.binder.pubsub.provisioning.PubSubResourceManager;
+import org.springframework.cloud.stream.binder.pubsub.provisioning.PubsubConnection;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,8 +41,8 @@ public class PubSubServiceAutoConfiguration {
 	private PubSubExtendedBindingProperties pubSubExtendedBindingProperties;
 
 	@Bean
-	public PubSubResourceManager pubSubResourceManager() {
-		return new PubSubResourceManager();
+	public PubSubResourceManager pubSubResourceManager(PubsubConnection connection) {
+		return new PubSubResourceManager(connection,pubSubExtendedBindingProperties);
 	}
 
 

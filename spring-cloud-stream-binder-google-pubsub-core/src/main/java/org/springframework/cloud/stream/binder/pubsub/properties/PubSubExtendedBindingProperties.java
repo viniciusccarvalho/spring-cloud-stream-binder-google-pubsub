@@ -39,6 +39,16 @@ public class PubSubExtendedBindingProperties implements
 		this.bindings = bindings;
 	}
 
+	private PubSubBinderProperties binder = new PubSubBinderProperties();
+
+	public PubSubBinderProperties getBinder() {
+		return binder;
+	}
+
+	public void setBinder(PubSubBinderProperties binder) {
+		this.binder = binder;
+	}
+
 	@Override
 	public PubSubConsumerProperties getExtendedConsumerProperties(String channelName) {
 		if (bindings.containsKey(channelName)

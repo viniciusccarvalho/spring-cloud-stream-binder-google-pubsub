@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package org.springframework.cloud.stream.binder.pubsub.support;
+package org.springframework.cloud.stream.binder.pubsub.properties;
 
 /**
  * @author Vinicius Carvalho
  */
-public interface PubSubBinder {
-	String SCST_HEADERS = "SCST_HEADERS";
-	String GROUP_INDEX_DELIMITER = ".";
-	String ALREADY_EXISTS = "ALREADY_EXISTS";
+public class PubSubBinderProperties {
+	private String projectName;
+
+	public String getProjectName() {
+		return projectName;
+	}
+
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
 }
