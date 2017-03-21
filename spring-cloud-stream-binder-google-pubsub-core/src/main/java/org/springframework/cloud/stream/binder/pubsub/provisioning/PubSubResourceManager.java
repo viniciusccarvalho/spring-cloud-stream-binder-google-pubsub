@@ -45,12 +45,12 @@ public class PubSubResourceManager {
 
 	private PubsubConnection client;
 
+	private PubSubExtendedBindingProperties properties;
+	
 	public PubSubResourceManager(PubsubConnection client, PubSubExtendedBindingProperties properties) {
 		this.client = client;
 		this.properties = properties;
 	}
-
-	private PubSubExtendedBindingProperties properties;
 
 	/**
 	 * Create a list of topics using name and properties such as prefix and partitionCount.

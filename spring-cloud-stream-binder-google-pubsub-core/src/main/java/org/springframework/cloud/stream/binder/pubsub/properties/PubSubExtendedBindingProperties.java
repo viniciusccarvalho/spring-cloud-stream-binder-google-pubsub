@@ -29,17 +29,18 @@ import org.springframework.cloud.stream.binder.ExtendedBindingProperties;
 @ConfigurationProperties("spring.cloud.stream.pubsub")
 public class PubSubExtendedBindingProperties implements
 		ExtendedBindingProperties<PubSubConsumerProperties, PubSubProducerProperties> {
+
 	private Map<String, PubSubBindingProperties> bindings = new HashMap<>();
 
 	public Map<String, PubSubBindingProperties> getBindings() {
 		return bindings;
 	}
 
+	private PubSubBinderProperties binder = new PubSubBinderProperties();
+
 	public void setBindings(Map<String, PubSubBindingProperties> bindings) {
 		this.bindings = bindings;
 	}
-
-	private PubSubBinderProperties binder = new PubSubBinderProperties();
 
 	public PubSubBinderProperties getBinder() {
 		return binder;

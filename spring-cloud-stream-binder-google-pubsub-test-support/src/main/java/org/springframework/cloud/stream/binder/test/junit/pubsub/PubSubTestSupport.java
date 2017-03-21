@@ -44,10 +44,10 @@ import org.springframework.util.StringUtils;
  */
 public class PubSubTestSupport  extends AbstractExternalResourceTestSupport<Object> {
 
-	Object stateHolder = null;
-	LocalPubSubHelper helper;
-	PublisherClient publisherClient;
-	SubscriberClient subscriberClient;
+	private Object stateHolder = null;
+	private LocalPubSubHelper helper;
+	private PublisherClient publisherClient;
+	private SubscriberClient subscriberClient;
 	private String projectId;
 	private ObjectMapper mapper = new ObjectMapper();
 
