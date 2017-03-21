@@ -32,11 +32,11 @@ public class PubSubExtendedBindingProperties implements
 
 	private Map<String, PubSubBindingProperties> bindings = new HashMap<>();
 
+	private PubSubBinderProperties binder = new PubSubBinderProperties();
+
 	public Map<String, PubSubBindingProperties> getBindings() {
 		return bindings;
 	}
-
-	private PubSubBinderProperties binder = new PubSubBinderProperties();
 
 	public void setBindings(Map<String, PubSubBindingProperties> bindings) {
 		this.bindings = bindings;

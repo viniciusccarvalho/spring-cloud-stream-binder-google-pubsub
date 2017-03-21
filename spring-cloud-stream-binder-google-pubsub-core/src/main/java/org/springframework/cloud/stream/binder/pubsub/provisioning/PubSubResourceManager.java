@@ -46,7 +46,7 @@ public class PubSubResourceManager {
 	private PubsubConnection client;
 
 	private PubSubExtendedBindingProperties properties;
-	
+
 	public PubSubResourceManager(PubsubConnection client, PubSubExtendedBindingProperties properties) {
 		this.client = client;
 		this.properties = properties;
